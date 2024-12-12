@@ -45,6 +45,12 @@ include(cmake/Options.cmake)
 add_executable(${PROJECT_NAME}
     main.cpp
     generated/src/Helper.cpp
+        Pokemon.cpp
+        Pokemon.h
+        Trainer.cpp
+        Trainer.h
+        Battle.cpp
+        Battle.h
 )
 
 include(cmake/CompilerFlags.cmake)

@@ -1,151 +1,66 @@
+#include "Trainer.h"
+#include "Battle.h"
 #include <iostream>
-#include <vector>
-#include <string>
-
-class Attack {
-private:
-    std::string name;
-    int power;
-
-public:
-    Attack(const std::string& name, int power) : name(name), power(power) {}
-
-    ~Attack() {
-       //  std::cout << "Destructorul Attack a fost apelat\n";
-    }
-
-    friend std::ostream& operator<<(std::ostream& os, const Attack& attack) {
-        os << attack.name << " (Power: " << attack.power << ")";
-        return os;
-    }
-
-    int getPower() const { return power; }
-};
-
-class Pokemon {
-private:
-    std::string name;
-    int hp;
-    std::vector<Attack> attacks;
-
-public:
-    Pokemon(const std::string& name, int hp, const std::vector<Attack>& attacks)
-        : name(name), hp(hp), attacks(attacks) {}
-
-    ~Pokemon() {
-        // std::cout << "Destructorul Pokemon a fost apelat\n";
-    }
-
-    friend std::ostream& operator<<(std::ostream& os, const Pokemon& pokemon) {
-        os << pokemon.name << " (HP: " << pokemon.hp << ")";
-        return os;
-    }
-
-    void showAttacks() const {
-        for (const auto& attack : attacks) {
-            std::cout << attack << "\n";
-        }
-    }
-
-    void receiveDamage(int damage) {
-        hp -= damage;
-        if (hp < 0) hp = 0;
-    }
-
-    int getHp() const { return hp; }
-    std::string getName() const { return name; }
-
-    const Attack& chooseAttack(int index) const {
-        if (index >= 0 && index < attacks.size()) {
-            return attacks[index];
-        }
-        return attacks[0];
-    }
-};
-
-class Trainer {
-private:
-    std::string name;
-    Pokemon pokemon;
-
-public:
-    Trainer(const std::string& name, const Pokemon& pokemon) : name(name), pokemon(pokemon) {}
-
-    ~Trainer() {
-       // std::cout << "Destructorul Trainer a fost apelat\n";
-    }
-
-    friend std::ostream& operator<<(std::ostream& os, const Trainer& trainer) {
-        os << "Trainer: " << trainer.name << " with " << trainer.pokemon;
-        return os;
-    }
-
-    void instructAttack(Trainer& opponent) {
-        int damage = pokemon.chooseAttack(0).getPower();
-        opponent.pokemon.receiveDamage(damage);
-    }
-};
-
-class Battle {
-private:
-    Trainer& trainer1;
-    Trainer& trainer2;
-
-public:
-    Battle(Trainer& trainer1, Trainer& trainer2) : trainer1(trainer1), trainer2(trainer2) {}
-
-    void start() {
-        std::cout << "Battle Start: " << trainer1 << " VS " << trainer2 << "\n";
-        trainer1.instructAttack(trainer2);
-        trainer2.instructAttack(trainer1);
-        std::cout << trainer1 << "\n" << trainer2 << "\n";
-    }
-};
-
-Pokemon choosePokemon() {
-    std::vector<Pokemon> availablePokemon = {
-        Pokemon("Pikachu", 100, { Attack("Thunderbolt", 50), Attack("Quick Attack", 20), Attack("Iron Tail", 40) }),
-        Pokemon("Charmander", 100, { Attack("Flamethrower", 55), Attack("Scratch", 15), Attack("Ember", 30) }),
-        Pokemon("Bulbasaur", 100, { Attack("Vine Whip", 45), Attack("Tackle", 15), Attack("Razor Leaf", 35) })
-    };
-
-    std::cout << "Cu ce Pokemon vrei sa joci?\n";
-    for (size_t i = 0; i < availablePokemon.size(); ++i) {
-        std::cout << i + 1 << ". " << availablePokemon[i].getName() << " cu atacurile:\n";
-        availablePokemon[i].showAttacks();
-    }
-
-    int choice;
-    std::cout << "Alege numarul Pokemonului: ";
-    std::cin >> choice;
-
-    while (choice < 1 || choice > availablePokemon.size()) {
-        std::cout << "Alegere invalida. Alege iar: ";
-        std::cin >> choice;
-    }
-
-    return availablePokemon[choice - 1];
-}
+#include <memory>
 
 int main() {
+    // Nume antrenori
     std::string trainer1Name, trainer2Name;
-    std::cout << "Nume trainer 1: ";
-    std::cin.ignore();
+    std::cout << "Enter name for Trainer 1: ";
     std::getline(std::cin, trainer1Name);
-
-    std::cout << "Nume trainer 2: ";
+    std::cout << "Enter name for Trainer 2: ";
     std::getline(std::cin, trainer2Name);
 
-    std::cout << trainer1Name << ", Nr pokemonului pe care l vrei:\n";
-    Pokemon pokemon1 = choosePokemon();
-    Trainer trainer1(trainer1Name, pokemon1);
+    // Creează antrenorii
+    Trainer trainer1(trainer1Name);
+    Trainer trainer2(trainer2Name);
 
-    std::cout << trainer2Name << ", Nr pokemonului pe care l vrei:\n";
-    Pokemon pokemon2 = choosePokemon();
-    Trainer trainer2(trainer2Name, pokemon2);
+    // Creează Pokémoni pentru fiecare antrenor
+    trainer1.addPokemon(std::make_unique<Pokemon>("Pikachu", 100, 20));
+    trainer1.addPokemon(std::make_unique<Pokemon>("Bulbasaur", 120, 18));
+    trainer1.addPokemon(std::make_unique<Pokemon>("Charmander", 110, 25));
+    trainer1.addPokemon(std::make_unique<Pokemon>("Squirtle", 130, 15));
 
-    Battle battle(trainer1, trainer2);
-    battle.start();
+    trainer2.addPokemon(std::make_unique<Pokemon>("Starmie", 120, 25));
+    trainer2.addPokemon(std::make_unique<Pokemon>("Magikarp", 50, 10));
+    trainer2.addPokemon(std::make_unique<Pokemon>("Gyarados", 160, 30));
+    trainer2.addPokemon(std::make_unique<Pokemon>("Eevee", 90, 22));
+
+    // Adaugă atacuri Pokémonilor
+    trainer1.selectPokemon(1)->addAttack("Thunderbolt", 40);
+    trainer1.selectPokemon(1)->addAttack("Quick Attack", 20);
+    trainer1.selectPokemon(1)->addAttack("Electro Ball", 50);
+
+    trainer1.selectPokemon(2)->addAttack("Vine Whip", 30);
+    trainer1.selectPokemon(2)->addAttack("Solar Beam", 60);
+    trainer1.selectPokemon(2)->addAttack("Tackle", 10);
+
+    trainer1.selectPokemon(3)->addAttack("Flamethrower", 50);
+    trainer1.selectPokemon(3)->addAttack("Ember", 30);
+    trainer1.selectPokemon(3)->addAttack("Fire Spin", 40);
+
+    trainer1.selectPokemon(4)->addAttack("Water Gun", 20);
+    trainer1.selectPokemon(4)->addAttack("Hydro Pump", 70);
+    trainer1.selectPokemon(4)->addAttack("Bubble Beam", 40);
+
+    trainer2.selectPokemon(1)->addAttack("Water Pulse", 35);
+    trainer2.selectPokemon(1)->addAttack("Hydro Pump", 60);
+    trainer2.selectPokemon(1)->addAttack("Bubble", 15);
+
+    trainer2.selectPokemon(2)->addAttack("Splash", 5);
+    trainer2.selectPokemon(2)->addAttack("Flail", 20);
+
+    trainer2.selectPokemon(3)->addAttack("Dragon Rage", 40);
+    trainer2.selectPokemon(3)->addAttack("Bite", 30);
+    trainer2.selectPokemon(3)->addAttack("Ice Fang", 35);
+
+    trainer2.selectPokemon(4)->addAttack("Quick Attack", 20);
+    trainer2.selectPokemon(4)->addAttack("Tackle", 10);
+    trainer2.selectPokemon(4)->addAttack("Hyper Beam", 100);
+
+    // Începe bătălia
+    Battle battle;
+    battle.startBattle(trainer1, trainer2);
 
     return 0;
 }
