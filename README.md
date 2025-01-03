@@ -1,11 +1,11 @@
-# Titlu proiect
+# Pokemon Battle
 
 ## Descriere proiect
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+Un joc turn based cu doi pokemoni care se bat intre ei. Pe rand, alegi cu ce miscare vrei sa ataci. Pierde jucatorul al carui pokemon ramane primul fara HP.
 
 ## Milestone #0
 
-- [ ] Nume proiect (poate fi schimbat ulterior)
+- [x] Nume proiect (poate fi schimbat ulterior)
 - [ ] Scurtă descriere a temei alese, ce v-ați propus să implementați
 
 ## Milestone #1

@@ -1,66 +1,71 @@
-#include "Trainer.h"
-#include "Battle.h"
+// main.cpp
+#include "Game.h"
 #include <iostream>
-#include <memory>
+#include <cstdlib>
+#include <ctime>
+#include <stdexcept>
+
+// Inițializarea tabelului de efectivitate pentru tipurile de Pokemon
+void initializeTypeEffectiveness() {
+    // Fire relationships
+    Pokemon::typeEffectiveness[PokemonType::FIRE][PokemonType::FIRE] = 0.5f;
+    Pokemon::typeEffectiveness[PokemonType::FIRE][PokemonType::WATER] = 0.5f;
+    Pokemon::typeEffectiveness[PokemonType::FIRE][PokemonType::GRASS] = 2.0f;
+    Pokemon::typeEffectiveness[PokemonType::FIRE][PokemonType::ICE] = 2.0f;
+    Pokemon::typeEffectiveness[PokemonType::FIRE][PokemonType::BUG] = 2.0f;
+    Pokemon::typeEffectiveness[PokemonType::FIRE][PokemonType::STEEL] = 2.0f;
+
+    // Water relationships
+    Pokemon::typeEffectiveness[PokemonType::WATER][PokemonType::FIRE] = 2.0f;
+    Pokemon::typeEffectiveness[PokemonType::WATER][PokemonType::WATER] = 0.5f;
+    Pokemon::typeEffectiveness[PokemonType::WATER][PokemonType::GRASS] = 0.5f;
+    Pokemon::typeEffectiveness[PokemonType::WATER][PokemonType::GROUND] = 2.0f;
+    Pokemon::typeEffectiveness[PokemonType::WATER][PokemonType::ROCK] = 2.0f;
+
+    // Electric relationships
+    Pokemon::typeEffectiveness[PokemonType::ELECTRIC][PokemonType::WATER] = 2.0f;
+    Pokemon::typeEffectiveness[PokemonType::ELECTRIC][PokemonType::ELECTRIC] = 0.5f;
+    Pokemon::typeEffectiveness[PokemonType::ELECTRIC][PokemonType::GRASS] = 0.5f;
+    Pokemon::typeEffectiveness[PokemonType::ELECTRIC][PokemonType::GROUND] = 0.0f;
+    Pokemon::typeEffectiveness[PokemonType::ELECTRIC][PokemonType::FLYING] = 2.0f;
+
+    // Grass relationships
+    Pokemon::typeEffectiveness[PokemonType::GRASS][PokemonType::FIRE] = 0.5f;
+    Pokemon::typeEffectiveness[PokemonType::GRASS][PokemonType::WATER] = 2.0f;
+    Pokemon::typeEffectiveness[PokemonType::GRASS][PokemonType::GRASS] = 0.5f;
+    Pokemon::typeEffectiveness[PokemonType::GRASS][PokemonType::POISON] = 0.5f;
+    Pokemon::typeEffectiveness[PokemonType::GRASS][PokemonType::GROUND] = 2.0f;
+    Pokemon::typeEffectiveness[PokemonType::GRASS][PokemonType::FLYING] = 0.5f;
+    Pokemon::typeEffectiveness[PokemonType::GRASS][PokemonType::BUG] = 0.5f;
+
+    // Ghost relationships
+    Pokemon::typeEffectiveness[PokemonType::GHOST][PokemonType::NORMAL] = 0.0f;
+    Pokemon::typeEffectiveness[PokemonType::GHOST][PokemonType::GHOST] = 2.0f;
+    Pokemon::typeEffectiveness[PokemonType::GHOST][PokemonType::PSYCHIC] = 2.0f;
+    Pokemon::typeEffectiveness[PokemonType::GHOST][PokemonType::DARK] = 0.5f;
+
+    // Și așa mai departe pentru restul tipurilor...
+}
 
 int main() {
-    // Nume antrenori
-    std::string trainer1Name, trainer2Name;
-    std::cout << "Enter name for Trainer 1: ";
-    std::getline(std::cin, trainer1Name);
-    std::cout << "Enter name for Trainer 2: ";
-    std::getline(std::cin, trainer2Name);
+    try {
+        // Inițializare generator numere aleatoare
+        std::srand(static_cast<unsigned int>(std::time(nullptr)));
 
-    // Creează antrenorii
-    Trainer trainer1(trainer1Name);
-    Trainer trainer2(trainer2Name);
+        // Inițializare tabel de efectivitate
+        initializeTypeEffectiveness();
 
-    // Creează Pokémoni pentru fiecare antrenor
-    trainer1.addPokemon(std::make_unique<Pokemon>("Pikachu", 100, 20));
-    trainer1.addPokemon(std::make_unique<Pokemon>("Bulbasaur", 120, 18));
-    trainer1.addPokemon(std::make_unique<Pokemon>("Charmander", 110, 25));
-    trainer1.addPokemon(std::make_unique<Pokemon>("Squirtle", 130, 15));
+        // Creare și rulare joc
+        Game game;
+        game.run();
 
-    trainer2.addPokemon(std::make_unique<Pokemon>("Starmie", 120, 25));
-    trainer2.addPokemon(std::make_unique<Pokemon>("Magikarp", 50, 10));
-    trainer2.addPokemon(std::make_unique<Pokemon>("Gyarados", 160, 30));
-    trainer2.addPokemon(std::make_unique<Pokemon>("Eevee", 90, 22));
-
-    // Adaugă atacuri Pokémonilor
-    trainer1.selectPokemon(1)->addAttack("Thunderbolt", 40);
-    trainer1.selectPokemon(1)->addAttack("Quick Attack", 20);
-    trainer1.selectPokemon(1)->addAttack("Electro Ball", 50);
-
-    trainer1.selectPokemon(2)->addAttack("Vine Whip", 30);
-    trainer1.selectPokemon(2)->addAttack("Solar Beam", 60);
-    trainer1.selectPokemon(2)->addAttack("Tackle", 10);
-
-    trainer1.selectPokemon(3)->addAttack("Flamethrower", 50);
-    trainer1.selectPokemon(3)->addAttack("Ember", 30);
-    trainer1.selectPokemon(3)->addAttack("Fire Spin", 40);
-
-    trainer1.selectPokemon(4)->addAttack("Water Gun", 20);
-    trainer1.selectPokemon(4)->addAttack("Hydro Pump", 70);
-    trainer1.selectPokemon(4)->addAttack("Bubble Beam", 40);
-
-    trainer2.selectPokemon(1)->addAttack("Water Pulse", 35);
-    trainer2.selectPokemon(1)->addAttack("Hydro Pump", 60);
-    trainer2.selectPokemon(1)->addAttack("Bubble", 15);
-
-    trainer2.selectPokemon(2)->addAttack("Splash", 5);
-    trainer2.selectPokemon(2)->addAttack("Flail", 20);
-
-    trainer2.selectPokemon(3)->addAttack("Dragon Rage", 40);
-    trainer2.selectPokemon(3)->addAttack("Bite", 30);
-    trainer2.selectPokemon(3)->addAttack("Ice Fang", 35);
-
-    trainer2.selectPokemon(4)->addAttack("Quick Attack", 20);
-    trainer2.selectPokemon(4)->addAttack("Tackle", 10);
-    trainer2.selectPokemon(4)->addAttack("Hyper Beam", 100);
-
-    // Începe bătălia
-    Battle battle;
-    battle.startBattle(trainer1, trainer2);
+    } catch (const std::exception& e) {
+        std::cerr << "Error: " << e.what() << std::endl;
+        return 1;
+    } catch (...) {
+        std::cerr << "An unknown error occurred!" << std::endl;
+        return 1;
+    }
 
     return 0;
 }
